@@ -41,7 +41,17 @@ namespace RayTracing
             return new Vec3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
         }
 
+        public static Vec3 operator -(Vec3 v1, Vec3 v2)
+        {
+            return new Vec3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+        }
+
         public static Vec3 operator *(Vec3 v, double a)
+        {
+            return new Vec3(v.x * a, v.y * a, v.z * a);
+        }
+
+        public static Vec3 operator *(double a, Vec3 v)
         {
             return new Vec3(v.x * a, v.y * a, v.z * a);
         }
@@ -51,7 +61,7 @@ namespace RayTracing
             return new Vec3(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z);
         }
 
-        public static Vec3 operator /(Vec3 v, double a)
+        public static Vec3 operator /(Vec3 v,double a)
         {
             return new Vec3(v.x / a, v.y / a, v.z / a);
         }
