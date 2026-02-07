@@ -12,9 +12,10 @@ namespace RayTracing
         private Vec3 direction;
 
 
-        public Point3 Origin { get; set; }
+        public Point3 Origin => origin;
 
-        public Vec3 Direction { get; set; }
+        public Vec3 Direction => direction;
+
 
 
         public Ray() 
@@ -29,23 +30,27 @@ namespace RayTracing
             this.direction = direction;
         }
 
-        public bool hitSphere(Point3 center, double r)
+        /*
+        public double hitSphere(Point3 center, double r)
         {
             Vec3 oc = center - origin;
-            double a = Vec3.dot(direction, direction);
-            double b = -2.0 * Vec3.dot(direction, oc);
-            double c = Vec3.dot(oc, oc) - r * r;
+            double a = direction.lengthSquared();
+            double h = Vec3.dot(direction, oc);
+            double c = oc.lengthSquared() - r*r;
 
-            double delta = b * b - 4 * a * c;
+            double delta = h*h - a*c;
 
-            return delta >= 0;
+            if (delta < 0)
+                return -1;
+
+            return (h - Math.Sqrt(delta)) / a;
         }
-
-        public Color3 rayColor()
+        */
+        public Color3 rayColor(IHittable world)
         {
-            if(hitSphere(new Point3(0, 0, -1), 0.5))
-            {
-                return new Color3(1, 0, 0);
+            HitRecord rec = new HitRecord();
+            if (world.hit(this, new Interval(0,Constants.infinity), ref rec)){
+                return 0.5 * (rec.normal + new Color3(1, 1, 1));
             }
 
             Vec3 unitDirection = Vec3.unitVector(direction);

@@ -33,7 +33,11 @@ namespace RayTracing
 
             Vec3 pixel100Loc = viewportUpperLeft + 0.5 * (pixelDeltau + pixelDeltav);
 
+            HittableList world = new HittableList();
 
+            world.Add(new Sphere(new Point3(0, 0, -1), 0.5));
+
+            world.Add(new Sphere(new Point3(0, -100.5, -1), 100));
 
             if (File.Exists("image.ppm"))
             {
@@ -55,7 +59,7 @@ namespace RayTracing
 
                     Ray r = new Ray(cameraCenter, rayDirection);
 
-                    Color3 pixelColor = r.rayColor();
+                    Color3 pixelColor = r.rayColor(world);
 
                     Color3.WriteColor(sw, pixelColor);
                     
