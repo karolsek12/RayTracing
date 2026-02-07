@@ -12,6 +12,8 @@ namespace RayTracing
 
         public double aspectRatio;
 
+        public int samplesPerPixel;
+
         private int imgHeight;
 
         private Vec3 cameraCenter;
@@ -22,6 +24,8 @@ namespace RayTracing
 
         private Vec3 pixelDeltav;
 
+        private double pixelSamplesScale;
+
 
 
         private void Initialize()
@@ -30,6 +34,8 @@ namespace RayTracing
 
             if (imgHeight < 1)
                 imgHeight = 1;
+
+            pixelSamplesScale = 1.0 / samplesPerPixel;
 
             cameraCenter = new Point3(0, 0, 0);
 
@@ -51,7 +57,25 @@ namespace RayTracing
 
             pixel100Loc = viewportUpperLeft + 0.5 * (pixelDeltau + pixelDeltav);
             
-    }
+        }
+
+        private Vec3 sampleSquare()
+        {
+            return new Vec3(Constants.randomDouble() - 0.5, Constants.randomDouble() - 0.5, 0);
+        }
+
+        private Ray GetRay(int i, int j)
+        {
+            Vec3 offset = sampleSquare();
+
+            Vec3 pixelSample = pixel100Loc + ((i + offset.x) * pixelDeltau) + ((j + offset.y) * pixelDeltav);
+
+            Point3 rayOrigin = cameraCenter;
+
+            Vec3 rayDirection = pixelSample - rayOrigin;
+
+            return new Ray(rayOrigin, rayDirection);
+        }
 
         public void Render(IHittable world)
         {
@@ -73,14 +97,13 @@ namespace RayTracing
             {
                 for (int j = 0; j < imgWidth; j++)
                 {
-                    Vec3 pixelCenter = pixel100Loc + (j * pixelDeltau) + (i * pixelDeltav);
-                    Vec3 rayDirection = pixelCenter - cameraCenter;
-
-                    Ray r = new Ray(cameraCenter, rayDirection);
-
-                    Color3 pixelColor = rayColor(r,world);
-
-                    Color3.WriteColor(sw, pixelColor);
+                    Color3 pixelColor = new Color3(0, 0, 0);
+                    for(int p = 0;p< samplesPerPixel;p++)
+                    {
+                        Ray r = GetRay(j, i);
+                        pixelColor += rayColor(r, world);
+                    }
+                    Color3.WriteColor(sw, pixelColor * pixelSamplesScale);
 
                 }
                 Console.WriteLine("Progress: " + (i + 1) * imgWidth + "/" + (imgWidth * imgHeight));

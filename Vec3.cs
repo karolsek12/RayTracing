@@ -106,9 +106,11 @@ namespace RayTracing
 
         public static void WriteColor(StreamWriter s, Color3 color)
         {
-            int r = (int)(255 * color.x);
-            int g = (int)(255 * color.y);
-            int b = (int)(255 * color.z);
+            Interval intensity = new Interval(0.0, 1.0);
+            int r = (int)(255 * intensity.clamp(color.x));
+            int g = (int)(255 * intensity.clamp(color.y));
+            int b = (int)(255 * intensity.clamp(color.z));
+            
 
             if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
                 throw new Exception("Wrong color");

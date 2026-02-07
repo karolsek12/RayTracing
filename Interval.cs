@@ -38,6 +38,13 @@ namespace RayTracing
             return min<x && x<max;
         }
 
+        public double clamp(double x)
+        {
+            if (x < min) return min;
+            if (x > max) return max;
+            return x;
+        }
+
         public static Interval empty = new Interval(+Constants.infinity,-Constants.infinity);
 
         public static Interval universe = new Interval(-Constants.infinity, +Constants.infinity);

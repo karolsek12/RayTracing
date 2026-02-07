@@ -17,5 +17,17 @@ namespace RayTracing
             return deg * (pi / 180.0);
         }
 
+        public static double randomDouble()
+        {
+            Random random = new Random();
+
+            return random.NextDouble();
+        }
+
+        public static double randomDouble(double min, double max)
+        {
+            return min + (max - min) * randomDouble();
+        }
+
     }
 }
