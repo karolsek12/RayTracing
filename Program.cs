@@ -1,7 +1,9 @@
-﻿using System.Security.Cryptography;
+﻿using System.Drawing;
+using System.Security.Cryptography;
 
 namespace RayTracing
 {
+
     internal class Program
     {
         static void Main(string[] args)
@@ -24,13 +26,12 @@ namespace RayTracing
             {
                 for(int j = 0;j< imgHeight; j++)
                 {
-                    int r =  (int)(255*(double)(i)/(imgWidth-1));
-                    int g = (int)(255 * (double)(j) / (imgHeight - 1));
-                    int b = 0;
-                    sw.Write(r + " " + g + " " + b + " ");
+                    double r =  (double)j / (imgWidth-1);
+                    double g = (double)i / (imgHeight-1);
+                    double b = 0;
+                    Color3.WriteColor(sw, new Color3(r,g,b));
                     
                 }
-                sw.WriteLine();
                 Console.WriteLine("Progress: " + (i + 1) * imgHeight + "/" + (imgWidth * imgHeight));
             }
 
