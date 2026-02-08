@@ -91,6 +91,41 @@ namespace RayTracing
             return Math.Sqrt(lengthSquared());
         }
 
+        public static Vec3 random()
+        {
+            return new Vec3(Constants.randomDouble(), Constants.randomDouble(), Constants.randomDouble());
+        }
+        
+        public static Vec3 random(double min, double max)
+        {
+            return new Vec3(Constants.randomDouble(min,max), Constants.randomDouble(min,max), Constants.randomDouble(min,max));
+        }
+
+        public static Vec3 randomUnitVector()
+        {
+            while (true)
+            {
+                Vec3 v = random(-1,1);
+                double len = v.lengthSquared();
+                if(len <= 1 && 1e-160 < len)
+                {
+                    return v/Math.Sqrt(len);
+                }
+            }
+        }
+
+        public static Vec3 randomOnHemisphere(Vec3 normal)
+        {
+            Vec3 onUnitSphere = randomUnitVector();
+            if (dot(onUnitSphere, normal) > 0.0)
+            {
+                return onUnitSphere;
+            }
+            else
+            {
+                return -onUnitSphere;
+            }
+        }
 
         public double this[int i]
         {
@@ -104,12 +139,22 @@ namespace RayTracing
             return x + " " + y + " " + z;
         }
 
+        public static double LinearToGamma(double linear)
+        {
+            if(linear > 0)
+            {
+                return Math.Sqrt(linear);
+            }
+
+            return 0;
+        }
+
         public static void WriteColor(StreamWriter s, Color3 color)
         {
             Interval intensity = new Interval(0.0, 1.0);
-            int r = (int)(255 * intensity.clamp(color.x));
-            int g = (int)(255 * intensity.clamp(color.y));
-            int b = (int)(255 * intensity.clamp(color.z));
+            int r = (int)(255 * intensity.clamp(LinearToGamma(color.x)));
+            int g = (int)(255 * intensity.clamp(LinearToGamma(color.y)));
+            int b = (int)(255 * intensity.clamp(LinearToGamma(color.z)));
             
 
             if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)

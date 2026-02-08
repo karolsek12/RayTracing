@@ -8,11 +8,13 @@ namespace RayTracing
 {
     public  class Camera
     {
-        public int imgWidth;
+        public int imgWidth = 100;
 
-        public double aspectRatio;
+        public double aspectRatio = 1.0;
 
-        public int samplesPerPixel;
+        public int samplesPerPixel = 10;
+
+        public int maxDepth = 10;
 
         private int imgHeight;
 
@@ -25,6 +27,8 @@ namespace RayTracing
         private Vec3 pixelDeltav;
 
         private double pixelSamplesScale;
+
+       
 
 
 
@@ -101,7 +105,7 @@ namespace RayTracing
                     for(int p = 0;p< samplesPerPixel;p++)
                     {
                         Ray r = GetRay(j, i);
-                        pixelColor += rayColor(r, world);
+                        pixelColor += rayColor(r,maxDepth, world);
                     }
                     Color3.WriteColor(sw, pixelColor * pixelSamplesScale);
 
@@ -112,12 +116,16 @@ namespace RayTracing
             sw.Close();
         }
 
-        private Color3 rayColor(Ray r,IHittable world)
+        private Color3 rayColor(Ray r,int depth,IHittable world)
         {
+            if (depth <= 0)
+                return new Color3(0, 0, 0);
+
             HitRecord rec = new HitRecord();
-            if (world.hit(r, new Interval(0, Constants.infinity), ref rec))
+            if (world.hit(r, new Interval(0.001, Constants.infinity), ref rec))
             {
-                return 0.5 * (rec.normal + new Color3(1, 1, 1));
+                Vec3 direction = rec.normal + Vec3.randomUnitVector();
+                return 0.1 * rayColor(new Ray(rec.p,direction),depth - 1, world);
             }
 
             Vec3 unitDirection = Vec3.unitVector(r.Direction);
