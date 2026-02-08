@@ -11,9 +11,20 @@ namespace RayTracing
 
             HittableList world = new HittableList();
 
-            world.Add(new Sphere(new Point3(0, 0, -1), 0.5));
+            Lambertian materialGround = new Lambertian(new Color3(0.8, 0.8, 0));
+            Lambertian materialCenter = new Lambertian(new Color3(0.1, 0.2, 0.5));
+            Metal materialLeft = new Metal(new Color3(0.8, 0.8, 0.8),0.3);
+            Metal materialRight = new Metal(new Color3(0.8, 0.6, 0.2),1.0);
 
-            world.Add(new Sphere(new Point3(0, -100.5, -1), 100));
+            
+
+            world.Add(new Sphere(new Point3(0, -100.5, -1), 100,materialGround));
+
+            world.Add(new Sphere(new Point3(0, 0, -1.2), 0.5,materialCenter));
+
+            world.Add(new Sphere(new Point3(-1.0, 0, -1.0), 0.5, materialLeft));
+
+            world.Add(new Sphere(new Point3(1.0, 0, -1.0), 0.5, materialRight));
 
             Camera cam = new Camera();
 

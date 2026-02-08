@@ -10,11 +10,13 @@ namespace RayTracing
     {
         private Point3 center;
         private double radius;
+        private Material mat;
 
-        public Sphere(Point3 center, double radius)
+        public Sphere(Point3 center, double radius, Material mat)
         {
             this.center = center;
             this.radius = Math.Max(0,radius);
+            this.mat = mat;
         }
 
         public bool hit(Ray r, Interval rayt,ref HitRecord rec)
@@ -43,6 +45,7 @@ namespace RayTracing
             rec.p = r.at(rec.t);
             Vec3 outwardNormal = (rec.p - center) / radius;
             rec.setFaceNormal(r, outwardNormal);
+            rec.mat = mat;
 
             return true;
         }

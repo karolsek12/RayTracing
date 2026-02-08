@@ -12,6 +12,7 @@ namespace RayTracing
         public Vec3 normal;
         public double t;
         public bool frontFace;
+        public Material mat;
 
         public void setFaceNormal(Ray r, Vec3 outwardNormal)
         {

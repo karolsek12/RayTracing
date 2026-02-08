@@ -124,8 +124,12 @@ namespace RayTracing
             HitRecord rec = new HitRecord();
             if (world.hit(r, new Interval(0.001, Constants.infinity), ref rec))
             {
-                Vec3 direction = rec.normal + Vec3.randomUnitVector();
-                return 0.1 * rayColor(new Ray(rec.p,direction),depth - 1, world);
+                Ray scattered = new Ray();
+                Color3 attentuation = new Color3();
+
+                if(rec.mat.scatter(r,rec,ref attentuation, ref scattered))
+                    return attentuation * rayColor(scattered,depth-1,world);
+                return new Color3(0, 0, 0);
             }
 
             Vec3 unitDirection = Vec3.unitVector(r.Direction);

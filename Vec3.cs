@@ -149,6 +149,17 @@ namespace RayTracing
             return 0;
         }
 
+        public bool NearZero()
+        {
+            double s = 1e-8;
+            return Math.Abs(e[0]) < s && Math.Abs(e[1]) < s && Math.Abs(e[2]) < s;
+        }
+
+        public static Vec3 Reflect(Vec3 v, Vec3 n)
+        {
+            return v - n*(2*dot(v, n));
+        }
+
         public static void WriteColor(StreamWriter s, Color3 color)
         {
             Interval intensity = new Interval(0.0, 1.0);
