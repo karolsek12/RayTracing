@@ -159,6 +159,14 @@ namespace RayTracing
         {
             return v - n*(2*dot(v, n));
         }
+        
+        public static Vec3 Refract(Vec3 uv, Vec3 n, double ratio)
+        {
+            double cosTheta = Math.Min(dot(-uv, n), 1.0);
+            Vec3 rOutPerp = ratio * (uv + cosTheta * n);
+            Vec3 rOutParr = -Math.Sqrt(Math.Abs(1.0 - rOutPerp.lengthSquared())) * n;
+            return rOutPerp + rOutParr;
+        }
 
         public static void WriteColor(StreamWriter s, Color3 color)
         {
