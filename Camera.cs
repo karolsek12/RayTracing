@@ -16,6 +16,14 @@ namespace RayTracing
 
         public int maxDepth = 10;
 
+        public double vfov = 90.0;
+
+        public Point3 lookFrom = new Point3(0.0, 0.0, 0.0);
+
+        public Point3 lookAt = new Point3(0.0, 0.0, -1.0);
+
+        public Vec3 vup = new Vec3(0.0, 1.0, 0.0);
+
         private int imgHeight;
 
         private Vec3 cameraCenter;
@@ -28,8 +36,11 @@ namespace RayTracing
 
         private double pixelSamplesScale;
 
-       
+        private Vec3 u;
 
+        private Vec3 v;
+
+        private Vec3 w;
 
 
         private void Initialize()
@@ -41,23 +52,33 @@ namespace RayTracing
 
             pixelSamplesScale = 1.0 / samplesPerPixel;
 
-            cameraCenter = new Point3(0, 0, 0);
+            cameraCenter = lookFrom;
 
-            double focalLength = 1.0;
+            double focalLength = (lookFrom-lookAt).length();
 
-            double viewportHeight = 2.0;
+            double theta = Constants.degToRad(vfov);
+
+            double h = Math.Tan(theta / 2);
+
+            double viewportHeight = 2 * h * focalLength;
 
             double viewportWidth = viewportHeight * (((double)imgWidth) / imgHeight);
 
-            Vec3 viewportu = new Vec3(viewportWidth, 0, 0);
+            w = Vec3.unitVector(lookFrom - lookAt);
 
-            Vec3 viewportv = new Vec3(0, -viewportHeight, 0);
+            u = Vec3.unitVector(Vec3.cross(vup,w));
+
+            v = Vec3.cross(w, u);
+
+            Vec3 viewportu = viewportWidth * u;
+
+            Vec3 viewportv = viewportHeight * -v;
 
             pixelDeltau = viewportu / imgWidth;
 
             pixelDeltav = viewportv / imgHeight;
 
-            Vec3 viewportUpperLeft = cameraCenter - new Vec3(0, 0, focalLength) - viewportu / 2 - viewportv / 2;
+            Vec3 viewportUpperLeft = cameraCenter - (focalLength*w) - viewportu / 2 - viewportv / 2;
 
             pixel100Loc = viewportUpperLeft + 0.5 * (pixelDeltau + pixelDeltav);
             
