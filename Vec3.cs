@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace RayTracing
 {
    
-    public class Vec3
+    public struct Vec3
     {
         public double[] e;
 
@@ -103,15 +103,15 @@ namespace RayTracing
 
         public static Vec3 randomUnitVector()
         {
-            while (true)
-            {
-                Vec3 v = random(-1,1);
-                double len = v.lengthSquared();
-                if(len <= 1 && 1e-160 < len)
-                {
-                    return v/Math.Sqrt(len);
-                }
-            }
+            double zenith = Constants.randomDouble() * Constants.pi;
+
+            double azimuth = Constants.randomDouble() * Constants.tau;
+
+            double s = Math.Sin(zenith);
+
+            return new Vec3(s* Math.Cos(azimuth),s* Math.Sin(azimuth), Math.Cos(zenith));
+
+
         }
 
         public static Vec3 randomOnHemisphere(Vec3 normal)
@@ -168,6 +168,12 @@ namespace RayTracing
             return rOutPerp + rOutParr;
         }
 
+        public static Vec3 RandomInUnitDisk()
+        {
+            double deg = Constants.randomDouble() * Constants.tau;
+
+            return new Vec3(Math.Cos(deg), Math.Sin(deg), 0.0);
+        }
         public static void WriteColor(StreamWriter s, Color3 color)
         {
             Interval intensity = new Interval(0.0, 1.0);

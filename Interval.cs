@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RayTracing
 {
-    public class Interval
+    public struct Interval
     {
         public double min;
         public double max;

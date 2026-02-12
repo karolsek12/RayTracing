@@ -10,6 +10,7 @@ namespace RayTracing
     {
         public const double infinity = Double.PositiveInfinity;
         public const double pi = Math.PI;
+        public const double tau = Math.Tau;
         private static Random random = new Random();
 
         public static double degToRad(double deg)

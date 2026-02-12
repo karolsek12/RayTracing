@@ -24,6 +24,10 @@ namespace RayTracing
 
         public Vec3 vup = new Vec3(0.0, 1.0, 0.0);
 
+        public double defocusAngle = 0.0;
+
+        public double focusDist = 10.0;
+
         private int imgHeight;
 
         private Vec3 cameraCenter;
@@ -42,6 +46,9 @@ namespace RayTracing
 
         private Vec3 w;
 
+        private Vec3 defocusDisku;
+
+        private Vec3 defocusDiskv;
 
         private void Initialize()
         {
@@ -54,13 +61,11 @@ namespace RayTracing
 
             cameraCenter = lookFrom;
 
-            double focalLength = (lookFrom-lookAt).length();
-
             double theta = Constants.degToRad(vfov);
 
             double h = Math.Tan(theta / 2);
 
-            double viewportHeight = 2 * h * focalLength;
+            double viewportHeight = 2 * h * focusDist;
 
             double viewportWidth = viewportHeight * (((double)imgWidth) / imgHeight);
 
@@ -78,15 +83,27 @@ namespace RayTracing
 
             pixelDeltav = viewportv / imgHeight;
 
-            Vec3 viewportUpperLeft = cameraCenter - (focalLength*w) - viewportu / 2 - viewportv / 2;
+            Vec3 viewportUpperLeft = cameraCenter - (focusDist*w) - viewportu / 2 - viewportv / 2;
 
             pixel100Loc = viewportUpperLeft + 0.5 * (pixelDeltau + pixelDeltav);
-            
+
+            double defocusRadius = focusDist * Math.Tan(Constants.degToRad(defocusAngle / 2.0));
+
+            defocusDisku = u * defocusRadius;
+
+            defocusDiskv = v * defocusRadius;
         }
 
         private Vec3 sampleSquare()
         {
             return new Vec3(Constants.randomDouble() - 0.5, Constants.randomDouble() - 0.5, 0);
+        }
+
+        private Point3 defocusDiskSample()
+        {
+            Vec3 p = Vec3.RandomInUnitDisk();
+
+            return cameraCenter + (p[0] * defocusDisku) + (p[1] * defocusDiskv);
         }
 
         private Ray GetRay(int i, int j)
@@ -95,7 +112,7 @@ namespace RayTracing
 
             Vec3 pixelSample = pixel100Loc + ((i + offset.x) * pixelDeltau) + ((j + offset.y) * pixelDeltav);
 
-            Point3 rayOrigin = cameraCenter;
+            Point3 rayOrigin = (defocusAngle <= 0) ? cameraCenter : defocusDiskSample();
 
             Vec3 rayDirection = pixelSample - rayOrigin;
 
@@ -123,11 +140,11 @@ namespace RayTracing
                 for (int j = 0; j < imgWidth; j++)
                 {
                     Color3 pixelColor = new Color3(0, 0, 0);
-                    for(int p = 0;p< samplesPerPixel;p++)
+                    Parallel.For(0, samplesPerPixel, (p) =>
                     {
                         Ray r = GetRay(j, i);
-                        pixelColor += rayColor(r,maxDepth, world);
-                    }
+                        pixelColor += rayColor(r, maxDepth, world);
+                    });
                     Color3.WriteColor(sw, pixelColor * pixelSamplesScale);
 
                 }
