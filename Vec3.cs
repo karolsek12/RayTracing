@@ -103,14 +103,13 @@ namespace RayTracing
 
         public static Vec3 randomUnitVector()
         {
-            double zenith = Constants.randomDouble() * Constants.pi;
-
-            double azimuth = Constants.randomDouble() * Constants.tau;
-
-            double s = Math.Sin(zenith);
-
-            return new Vec3(s* Math.Cos(azimuth),s* Math.Sin(azimuth), Math.Cos(zenith));
-
+            while (true)
+            {
+                Vec3 p = random(-1, 1);
+                double lensq = p.lengthSquared();
+                if (1e-160 < lensq && lensq <= 1)
+                    return p / Math.Sqrt(lensq);
+            }
 
         }
 
@@ -170,9 +169,13 @@ namespace RayTracing
 
         public static Vec3 RandomInUnitDisk()
         {
-            double deg = Constants.randomDouble() * Constants.tau;
 
-            return new Vec3(Math.Cos(deg), Math.Sin(deg), 0.0);
+            while (true)
+            {
+                Vec3 p = new Vec3(Constants.randomDouble(-1,1),Constants.randomDouble(-1,1), 0);
+                if (p.lengthSquared() < 1)
+                    return p;
+            }
         }
         public static void WriteColor(StreamWriter s, Color3 color)
         {
